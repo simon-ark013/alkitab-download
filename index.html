@@ -41,7 +41,7 @@
         #status {
             margin: 15px 0;
             padding: 12px;
-            background: #bf172b;
+            background: #e3f2fd;
             border-radius: 8px;
             color: #1976d2;
             font-size: 14px;
@@ -69,10 +69,10 @@
     <div id="status">Mengenal pasti peranti anda...</div>
     
     <div class="download-section">
-        <h2>Muat Turun untuk Peranti Anda.</h2>
+        <h2>Muat Turun Bagi Peranti Anda.</h2>
         <p>Pilih platform anda:</p>
-        <a href="https://apps.apple.com/my/app/alkitab-versi-borneo-avb/id6467617482" class="btn" id="iosBtn" target="_top">Muat Turun untuk iOS</a>
-        <a href="https://play.google.com/store/apps/details?id=org.fcbh.zlmavb.n2.on&hl=en_US&gl=US" class="btn android" id="androidBtn" target="_top">Muat Turun untuk Android</a>
+        <a href="https://apps.apple.com/my/app/alkitab-versi-borneo-avb/id6467617482" class="btn" id="iosBtn" target="_top">Muat Turun Bagi iOS</a>
+        <a href="https://play.google.com/store/apps/details?id=org.fcbh.zlmavb.n2.on&hl=en_US&gl=US" class="btn android" id="androidBtn" target="_top">Muat Turun Bagi Android</a>
     </div>
 
     <script>
@@ -98,42 +98,51 @@
             const androidUrl = 'https://play.google.com/store/apps/details?id=org.fcbh.zlmavb.n2.on&hl=en_US&gl=US';
             
             if (device === 'ios') {
-                statusDiv.innerHTML = 'Peranti iOS dikesan! Membuka App Store...<br><a href="' + iosUrl + '" class="redirect-btn" target="_top">Klik di sini jika tidak dialihkan</a>';
+                statusDiv.innerHTML = 'Peranti iOS Dikesan!<br><br><a href="' + iosUrl + '" class="redirect-btn" onclick="openStore(\'' + iosUrl + '\'); return false;">Buka App Store</a>';
                 statusDiv.style.background = '#e3f2fd';
                 
-                // Try multiple redirect methods
+                // Try auto-opening in new window
                 setTimeout(() => {
-                    window.top.location.href = iosUrl;
+                    openStore(iosUrl);
                 }, 500);
-                
-                setTimeout(() => {
-                    if (window.top === window) {
-                        window.location.href = iosUrl;
-                    } else {
-                        window.open(iosUrl, '_top');
-                    }
-                }, 1000);
                 
             } else if (device === 'android') {
-                statusDiv.innerHTML = 'Peranti Android dikesan! Membuka Play Store...<br><a href="' + androidUrl + '" class="redirect-btn" target="_top">Klik di sini jika tidak dialihkan</a>';
+                statusDiv.innerHTML = 'Peranti Android Dikesan!<br><br><a href="' + androidUrl + '" class="redirect-btn" onclick="openStore(\'' + androidUrl + '\'); return false;">Buka Play Store</a>';
                 statusDiv.style.background = '#e8f5e9';
                 
-                // Try multiple redirect methods
+                // Try auto-opening in new window
                 setTimeout(() => {
-                    window.top.location.href = androidUrl;
+                    openStore(androidUrl);
                 }, 500);
                 
-                setTimeout(() => {
-                    if (window.top === window) {
-                        window.location.href = androidUrl;
-                    } else {
-                        window.open(androidUrl, '_top');
-                    }
-                }, 1000);
-                
             } else {
-                statusDiv.innerHTML = 'Desktop/Peranti lain dikesan. Sila pilih platform anda di bawah:';
+                statusDiv.innerHTML = 'Desktop/Peranti Lain Dikesan. Sila Pilih Platform Anda Yang Berkenaan:';
                 statusDiv.style.background = '#fff3e0';
+            }
+        }
+        
+        function openStore(url) {
+            // Try opening in new window/tab
+            const newWindow = window.open(url, '_blank');
+            
+            // Fallback: try parent window
+            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                try {
+                    window.parent.location.href = url;
+                } catch(e) {
+                    try {
+                        window.top.location.href = url;
+                    } catch(e2) {
+                        // Last resort: create a temporary link and click it
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.target = '_blank';
+                        a.rel = 'noopener noreferrer';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    }
+                }
             }
         }
 
